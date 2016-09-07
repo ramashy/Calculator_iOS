@@ -1,0 +1,79 @@
+//  Developer - Shyanaka Rama
+//  ViewController.swift
+//  Calculator
+//
+//  Created by shyanaka ramachandra on 9/1/16.
+//  Copyright © 2016 shyanaka ramachandra. All rights reserved.
+//
+
+import UIKit
+
+class ViewController: UIViewController {
+    @IBOutlet private var display: UILabel!
+    private var userIsInTheMiddleOfTyping = false
+    @IBAction private func touchDigit(sender: UIButton){
+        let digit = sender.currentTitle!
+        
+        if  userIsInTheMiddleOfTyping
+        {
+        let textCurrentlyInDisplay = display!.text!
+        display!.text = textCurrentlyInDisplay + digit
+        }
+        else
+        {
+            display!.text = digit
+        }
+        userIsInTheMiddleOfTyping = true
+        
+    }
+    
+    
+    var savedProgram: Calculatorbrain.PropertyList?
+    
+    @IBAction func save() {
+       savedProgram = brain.program
+    }
+    
+    
+    
+    
+    @IBAction func reset() {
+        if savedProgram != nil
+        {
+            brain.program = savedProgram!
+            displayValue = brain.result
+        }
+    }
+    
+    
+    private var displayValue : Double
+    {
+        get
+        {
+           return Double (display.text!)!
+        }
+        set
+        {
+            display.text = String(newValue)
+            
+        }
+    }
+    
+    
+    private var brain = Calculatorbrain()
+    
+    @IBAction private func performOperation(sender: UIButton) {
+        if userIsInTheMiddleOfTyping
+        {
+            brain.setOperand(displayValue)
+            userIsInTheMiddleOfTyping = false
+        }
+        
+        if let mathematiocalSymbol = sender.currentTitle
+        {
+          brain.performOperation(mathematiocalSymbol)
+        }
+        displayValue = brain.result
+    }
+}
+
